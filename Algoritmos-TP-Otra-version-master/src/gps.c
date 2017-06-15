@@ -1,0 +1,87 @@
+/************
+ * FILE gps.c
+ ************/
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include "gps.h"
+#include "types.h"
+#include "config.h"
+#include "errors.h"
+#include "dates.h"
+
+/******************Prototipos**************************/
+status_t fix_field_time(long unsigned, struct tm *);
+/******************************************************/
+
+/**************************************************
+Función para el proceso de los datos cargados.
+Lee una linea del flujo de entrada,
+si esta empieza con el encabezado de protocolo
+que contiene los datos de geolocalización devuelve FOUND,
+extrae la hora y lo guarda en la estructura que recibe.
+Si no devuelve NOT_FOUND.
+******************************************************/
+status_t parse_gps_line(struct tm *time_struct, bool_t * found, bool_t * eof){
+    status_t st;
+    size_t i = 0;
+    char * token;
+    char * remainder;
+    char gps_line[MAX_GPS_LINE+2];
+    char * nmea_array[NMEA_TOTAL_FIELDS];
+    unsigned long field_time_value;
+    
+    if(time_struct == NULL || eof == NULL || found == NULL)
+        return ERROR_NULL_POINTER;
+    if(fgets(gps_line, MAX_GPS_LINE + 2, stdin) == NULL){
+        (*eof) = TRUE;
+        return OK;
+    }
+    if((token = strtok(gps_line, GPS_DELIMITER)) == NULL){
+        (*found) = FALSE;  
+        return OK;
+    }
+    while(token != NULL){
+        nmea_array[i++] = token;
+        token = strtok(NULL, GPS_DELIMITER)
+    }
+    if(strcmp(nmea_array[NMEA_ID_FIELD], ID_MSG)){
+        (*found) = FALSE;
+        return OK;
+    }
+    field_time_value = strtoul(nmea_array[NMEA_TIME_FIELD], &remainder, 10);
+    if(!(*remainder))
+        return ERROR_INVALID_DATA;
+    if((st = fix_field_time(field_time_value, time_struct)) != OK)
+        return st;
+    (*found) = TRUE;
+    return OK;
+}
+
+/*****************************************************
+Recibe una cadena de caracteres que contiene dígitos,
+verifica que corresponda al formato de horas hhmmss,
+y si es asi lo guarda en la estructura que recibe.
+****************************************************/
+status_t fix_field_time(unsigned long value, struct tm *time_struct){     
+    unsigned long aux;
+
+    if(time_struct == NULL)
+        return ERROR_NULL_POINTER;
+
+    aux = (value /10000);
+    if(aux > 23)
+        return ERROR_INVALID_DATA;
+    time_struct->tm_hour = aux;
+    aux = (value%10000)/100;
+    if(aux > 59)
+        return ERROR_INVALID_DATA;
+    time_struct->tm_min = aux;
+    aux = (value%100);
+    if(aux > 59)
+        return ERROR_INVALID_DATA;
+    time_struct->tm_sec = aux;
+    return OK;
+}
