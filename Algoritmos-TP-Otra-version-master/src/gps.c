@@ -45,7 +45,7 @@ status_t parse_gps_line(struct tm *time_struct, bool_t * found, bool_t * eof){
     }
     while(token != NULL){
         nmea_array[i++] = token;
-        token = strtok(NULL, GPS_DELIMITER)
+        token = strtok(NULL, GPS_DELIMITER);
     }
     if(strcmp(nmea_array[NMEA_ID_FIELD], ID_MSG)){
         (*found) = FALSE;
