@@ -9,7 +9,9 @@
 #define OUTPUT_STREAM stdout
 
 typedef struct{
-    date_format_t date_format;
+	export_format_t export_format;
+	FILE * input_file;
+	FILE * output_file;
 } config_t;
 
 #endif

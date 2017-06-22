@@ -22,8 +22,8 @@ typedef enum{
 } status_t;
 
 typedef enum{
-    DATE_AAAAMMDDHHMMSS_FORMAT,
-    DATE_AAAADDDHHMMSS_FORMAT
-} date_format_t;
+	CSV_FORMAT,
+	KML_FORMAT
+} export_format_t;
 
 #endif

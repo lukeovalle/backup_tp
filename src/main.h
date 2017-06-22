@@ -2,7 +2,7 @@
 FILE main.h
 *******************************/
 #include <stdio.h>
-#define NUMBER_ARGS 3
+#define NUMBER_ARGS 6
 #define FMT_FLAG_POSITION 1
 #define FMT_FLAG_SPAN 4
 #define FMT_FLAG "-fmt"

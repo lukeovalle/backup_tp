@@ -42,19 +42,27 @@ y que sean correctos, luego guarda lo ingresado en
 una estructura de configuración.
 **********************************************************/
 status_t validate_args(int argc, char *argv[], config_t *config){
+    size_t i;
     if(argv == NULL || config == NULL)
 	return ERROR_NULL_POINTER;
     if(argc != NUMBER_ARGS)
 	return ERROR_INVALID_NUMBER_ARGS;
-    if(strncmp(argv[FMT_FLAG_POSITION], FMT_FLAG, FMT_FLAG_SPAN))
-	return ERROR_INVALID_ARGS;
-    if(!strncmp(argv[FMT_TYPE_POSITION], DATE_FMT_AAAAMMDDHHMMSS, DATE_FMT_AAAAMMDDHHMMSS_SPAN)){
-	config->date_format = DATE_AAAAMMDDHHMMSS_FORMAT;
-	return OK;
-    }
-    if(!strncmp(argv[FMT_TYPE_POSITION], DATE_FMT_AAAADDDHHMMSS, DATE_FMT_AAAADDDHHMMSS_SPAN)){
-	config->date_format = DATE_AAAADDDHHMMSS_FORMAT;
-	return OK;
-    }
-    return ERROR_INVALID_ARGS;
+    i = 1;
+    while(i < argc){
+	if(!strcmp(argv[i], FORMAT_FLAG)){
+	    if(!strcmp(argv[i+1], CSV_FORMAT_ARG))
+		config->export_format = CSV_FORMAT;
+	    else if(!strcmp(argv[i+1], KML_FORMAT_ARG))
+		config->export_format = KML_FORMAT;
+	    else
+		return ERROR_INVALID_ARGS;
+	    i += 2;
+	}
+	else if(!strcmp(argv[i], OUTPUT_FILE_FLAG)){
+	    if((config->output_file = fopen(argv[i+1], "wt")) == NULL){
+		/**/
+
+
+
+
 }

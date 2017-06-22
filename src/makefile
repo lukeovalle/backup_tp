@@ -4,10 +4,10 @@
 
 CC=gcc
 CFLAGS=-ansi -pedantic -Wall -o3
-all: gpsdateparser
+all: gpsviewer
 
-gpsdateparser: main.o config.o dates.o errors.o gps.o gps_process.o
-	$(CC) $(CFLAGS) -o gpsdateparser main.o config.o gps.o errors.o dates.o gps_process.o
+gpsviewer: main.o config.o dates.o errors.o gps.o gps_process.o
+	$(CC) $(CFLAGS) -o gpsviewer main.o config.o gps.o errors.o dates.o gps_process.o
 
 main.o: main.c main.h config.h types.h dates.h errors.h gps_process.h
 	$(CC) $(CFLAGS) -o main.o -c main.c
@@ -26,6 +26,9 @@ dates.o: dates.c dates.h config.h types.h
 
 gps_process.o: gps_process.c gps_process.h gps.h types.h dates.h config.h errors.h
 	$(CC) $(CFLAGS) -o gps_process.o -c gps_process.c
+
+array.o: array.c array.h kml.h
+	$(CC) $(CFLAGS) -o array.o -c array.c
 
 clean:
 	rm -v *.o
